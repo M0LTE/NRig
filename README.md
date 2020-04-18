@@ -8,7 +8,7 @@ Published to https://www.nuget.org/packages/NRig automatically via GitHub action
 | Feature           | FT817/818/857/897/450d | TS2000 | any other |
 | ----------------- | ---------------------- | ------ | --------- |
 | Find radio        | yes                    | no     | no        |
-| Get/set frequency | yes                    | no     | no        |
+| Get/set frequency | yes                    | yes    | no        |
 | Anything else     | no                     | no     | no        |
 
 # Usage:
