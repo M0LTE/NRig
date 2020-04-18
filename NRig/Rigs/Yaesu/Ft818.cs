@@ -141,6 +141,44 @@ namespace NRig.Rigs.Yaesu
             throw new TimeoutException();
         }
 
+        public static (string port, int baud) FindComPort()
+        {
+            string[] ports = SerialPort.GetPortNames();
+
+            foreach (string s in ports)
+            {
+                foreach (int baud in new[] { 4800, 9600, 38400 })
+                {
+                    using (var sp = new SerialPort(s, baud, Parity.None, 8, StopBits.Two))
+                    {
+                        sp.ReadTimeout = 1000;
+
+                        try
+                        {
+                            sp.Open();
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            var freq = ReadFrequencyFromRig(sp);
+
+                            return (s, baud);
+                        }
+                        catch (TimeoutException)
+                        {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            return (null, 0);
+        }
+
         public Task SetActiveVfo(Vfo bfo) => throw new NotImplementedException();
         public Task SetPttState(bool value) => throw new NotImplementedException();
         public Task<bool> GetPttState() => throw new NotImplementedException();
