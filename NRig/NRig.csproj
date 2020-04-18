@@ -8,4 +8,9 @@
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
 </Project>
