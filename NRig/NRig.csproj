@@ -18,12 +18,12 @@
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Tom Fanning</Authors>
     <Company>Tom Fanning Limited</Company>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Description>.NET Standard library for controlling common ham radio rigs directly via CAT. Currently early days but contributions welcome via PRs.</Description>
+    <Description>.NET Standard library for controlling common ham radio rigs directly via CAT. Currently early days but contributions welcome via PRs. https://github.com/M0LTE/NRig</Description>
   </PropertyGroup>
 
 </Project>
