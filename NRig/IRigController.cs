@@ -5,6 +5,7 @@ namespace NRig
 {
     public interface IRigController : IDisposable
     {
+        event EventHandler<FrequencyEventArgs> FrequencyChanged;
         Task<Frequency> GetFrequency(Vfo vfo);
         Task SetFrequency(Vfo vfo, Frequency frequency);
         Task SetActiveVfo(Vfo bfo);
@@ -27,5 +28,11 @@ namespace NRig
         Task<bool> GetPreampState();
         Task SetClarifierOffset(Frequency frequency);
         Task<Frequency> GetClarifierOffset();
+    }
+
+    public class FrequencyEventArgs : EventArgs
+    {
+        public Vfo Vfo { get; set; }
+        public Frequency Frequency { get; set; }
     }
 }

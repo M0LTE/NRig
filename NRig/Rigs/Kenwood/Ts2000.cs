@@ -9,6 +9,8 @@ namespace NRig.Rigs.Kenwood
 {
     public class Ts2000 : IRigController
     {
+        public event EventHandler<FrequencyEventArgs> FrequencyChanged;
+
         private readonly SerialPort serialPort;
         private readonly TimeSpan rigPollInterval;
         private readonly object lockObj = new object();
@@ -78,6 +80,11 @@ namespace NRig.Rigs.Kenwood
 
                 if (hz1 != 0)
                 {
+                    if (hz1 != 0)
+                    {
+                        FrequencyChanged?.Invoke(null, new FrequencyEventArgs { Frequency = hz1, Vfo = Vfo.A });
+                    }
+
                     if (freqHzA != hz1)
                     {
                         freqHzA = hz1;
@@ -88,6 +95,11 @@ namespace NRig.Rigs.Kenwood
 
                 if (hz2 != 0)
                 {
+                    if (hz2 != 0)
+                    {
+                        FrequencyChanged?.Invoke(null, new FrequencyEventArgs { Frequency = hz2, Vfo = Vfo.B });
+                    }
+
                     if (freqHzB != hz2)
                     {
                         freqHzB = hz2;

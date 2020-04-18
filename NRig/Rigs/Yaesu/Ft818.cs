@@ -10,6 +10,8 @@ namespace NRig.Rigs.Yaesu
 {
     public sealed class Ft818 : IRigController
     {
+        public event EventHandler<FrequencyEventArgs> FrequencyChanged;
+
         private readonly SerialPort serialPort;
         private readonly static byte[] freqRequestCommand = new byte[] { 0, 0, 0, 0, 0x03 };
         private readonly TimeSpan rigPollInterval;
@@ -43,6 +45,10 @@ namespace NRig.Rigs.Yaesu
 
                 if (freqHz != hz)
                 {
+                    if (freqHz != 0)
+                    {
+                        FrequencyChanged?.Invoke(null, new FrequencyEventArgs { Frequency = hz, Vfo = Vfo.A });
+                    }
                     freqHz = hz;
                 }
 
@@ -202,6 +208,9 @@ namespace NRig.Rigs.Yaesu
 
         public void Dispose() => Dispose(true);
         private bool disposedValue;
+
+        
+
         private void Dispose(bool disposing)
         {
             if (!disposedValue)
