@@ -5,10 +5,11 @@ Published to https://www.nuget.org/packages/NRig automatically via GitHub action
 
 # Support matrix
 
-| Radio                  | Get/set frequency | anything else |
-| ---------------------- | ----------------- | ------------- |
-| FT817/818/857/897/450d | yes               | no            |
-| TS2000                 | yes               | no            |
+| Feature           | FT817/818/857/897/450d | TS2000 | any other |
+| ----------------- | ---------------------- | ------ | --------- |
+| Find radio        | yes                    | no     | no        |
+| Get/set frequency | yes                    | no     | no        |
+| Anything else     | no                     | no     | no        |
 
 # Usage:
 TODO
