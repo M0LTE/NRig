@@ -1,121 +1,166 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO.Ports;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NRig.Rigs.Yaesu
 {
     public sealed class Ft818 : IRigController
     {
-        public Task<bool> BeginTransmitTuningCarrier(TimeSpan maxDuration)
+        private readonly SerialPort serialPort;
+        private readonly static byte[] freqRequestCommand = new byte[] { 0, 0, 0, 0, 0x03 };
+        private readonly TimeSpan rigPollInterval;
+        private readonly static object lockObj = new object();
+        private long freqHz;
+
+        public Ft818(string comPort, int baudRate, TimeSpan rigPollInterval)
         {
-            throw new NotImplementedException();
+            this.rigPollInterval = rigPollInterval;
+            serialPort = new SerialPort(comPort, baudRate, Parity.None, 8, StopBits.Two);
+            serialPort.ReadTimeout = 1000;
+            serialPort.Open();
+
+            Task.Factory.StartNew(PollRig, TaskCreationOptions.LongRunning);
         }
 
-        public Task<bool> EndTransmitTuningCarrier()
+        private void PollRig()
         {
-            throw new NotImplementedException();
+            while (true)
+            {
+                int hz;
+
+                try
+                {
+                    hz = ReadFrequencyFromRig(serialPort);
+                }
+                catch (TimeoutException)
+                {
+                    continue;
+                }
+
+                if (freqHz != hz)
+                {
+                    freqHz = hz;
+                }
+
+                Thread.Sleep(rigPollInterval);
+            }
         }
 
-        public Task<AgcMode> GetAgcState()
+        private static int ReadFrequencyFromRig(SerialPort serialPort)
         {
-            throw new NotImplementedException();
+            lock (lockObj)
+            {
+                serialPort.Write(freqRequestCommand, 0, freqRequestCommand.Length);
+
+                var rxbuf = new List<byte>
+                {
+                    (byte)serialPort.ReadByte(),
+                    (byte)serialPort.ReadByte(),
+                    (byte)serialPort.ReadByte(),
+                    (byte)serialPort.ReadByte(),
+                    (byte)serialPort.ReadByte(),
+                };
+
+                string first = GetFreqChars(rxbuf, 0);
+                string second = GetFreqChars(rxbuf, 1);
+                string third = GetFreqChars(rxbuf, 2);
+                string fourth = GetFreqChars(rxbuf, 3);
+
+                if (!int.TryParse($"{first}{second}{third}{fourth}", out int deciHertz))
+                {
+                    return 0;
+                }
+
+                int hz = deciHertz * 10;
+
+                return hz;
+            }
         }
 
-        public Task<bool> GetAttenuatorState()
+        private static string GetFreqChars(List<byte> rxbuf, int index)
         {
-            throw new NotImplementedException();
-        }
+            string hex = rxbuf[index].ToString("X");
+            if (hex.Length == 1)
+            {
+                hex = "0" + hex;
+            }
 
-        public Task<Frequency> GetClarifierOffset()
-        {
-            throw new NotImplementedException();
+            return hex;
         }
 
         public Task<Frequency> GetFrequency(Vfo vfo)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<Frequency>(freqHz);
         }
 
-        public Task<bool> GetNoiseBlankerState()
+        public Task SetFrequency(Vfo vfo, Frequency hz)
         {
-            throw new NotImplementedException();
+            var sw = Stopwatch.StartNew();
+            while (sw.Elapsed < TimeSpan.FromSeconds(5))
+            {
+                if (hz == freqHz)
+                    return Task.CompletedTask;
+
+                // to set 439700000 send
+                // 0x43 0x97 0x00 0x00 followed by opcode 0x01
+
+                if (hz >= 1000000000)
+                {
+                    throw new ArgumentException("Frequency too high", nameof(hz));
+                }
+
+                string hertzStr = hz.ToString("D9");
+
+                byte[] digits = new byte[5];
+
+                digits[0] = byte.Parse(hertzStr.Substring(0, 2), NumberStyles.HexNumber);
+                digits[1] = byte.Parse(hertzStr.Substring(2, 2), NumberStyles.HexNumber);
+                digits[2] = byte.Parse(hertzStr.Substring(4, 2), NumberStyles.HexNumber);
+                digits[3] = byte.Parse(hertzStr.Substring(6, 2), NumberStyles.HexNumber);
+                digits[4] = 0x01;
+
+                lock (lockObj)
+                {
+                    serialPort.Write(digits, 0, digits.Length);
+                    freqHz = hz;
+                    try
+                    {
+                        serialPort.ReadByte();
+                        return Task.CompletedTask;
+                    }
+                    catch (TimeoutException)
+                    {
+                    }
+                }
+            }
+
+            throw new TimeoutException();
         }
 
-        public Task<bool> GetPreampState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> GetPttState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> GetTunerState()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MeterReadings> ReadMeters()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> RunTuningCycle()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetActiveVfo(Vfo bfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetAgcState(AgcMode agcMode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetAttenuatorState(bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetClarifierOffset(Frequency frequency)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetFrequency(Vfo vfo, Frequency frequency)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetMode(Vfo vfo, Mode mode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetNoiseBlankerState(bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetPreampState(bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetPttState(bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SetTunerState(bool value)
-        {
-            throw new NotImplementedException();
-        }
+        public Task SetActiveVfo(Vfo bfo) => throw new NotImplementedException();
+        public Task SetPttState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetPttState() => throw new NotImplementedException();
+        public Task SetMode(Vfo vfo, Mode mode) => throw new NotImplementedException();
+        public Task SetTunerState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetTunerState() => throw new NotImplementedException();
+        public Task RunTuningCycle() => throw new NotImplementedException();
+        public Task<MeterReadings> ReadMeters() => throw new NotImplementedException();
+        public Task SetAgcState(AgcMode agcMode) => throw new NotImplementedException();
+        public Task<AgcMode> GetAgcState() => throw new NotImplementedException();
+        public Task SetNoiseBlankerState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetNoiseBlankerState() => throw new NotImplementedException();
+        public Task BeginTransmitTuningCarrier(TimeSpan maxDuration) => throw new NotImplementedException();
+        public Task EndTransmitTuningCarrier() => throw new NotImplementedException();
+        public Task SetAttenuatorState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetAttenuatorState() => throw new NotImplementedException();
+        public Task SetPreampState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetPreampState() => throw new NotImplementedException();
+        public Task SetClarifierOffset(Frequency frequency) => throw new NotImplementedException();
+        public Task<Frequency> GetClarifierOffset() => throw new NotImplementedException();
 
         public void Dispose() => Dispose(true);
         private bool disposedValue;

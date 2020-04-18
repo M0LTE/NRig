@@ -12,7 +12,8 @@ namespace NRig.Rigs.Kenwood
         private readonly SerialPort serialPort;
         private readonly TimeSpan rigPollInterval;
         private readonly object lockObj = new object();
-        private long freqHz;
+        private long freqHzA;
+        private long freqHzB;
 
         public Ts2000(string comPort, int baudRate, TimeSpan rigPollInterval)
         {
@@ -25,22 +26,43 @@ namespace NRig.Rigs.Kenwood
             Task.Factory.StartNew(PollRig, TaskCreationOptions.LongRunning);
         }
 
-        public Task<Frequency> GetFrequency(Vfo vfo) => Task.FromResult<Frequency>(freqHz);
+        public Task<Frequency> GetFrequency(Vfo vfo)
+        {
+            switch (vfo)
+            {
+                case Vfo.A:
+                    return Task.FromResult<Frequency>(freqHzA);
+                case Vfo.B:
+                    return Task.FromResult<Frequency>(freqHzB);
+            }
+
+            throw new NotSupportedException(vfo.ToString());
+        }
 
         private static readonly Dictionary<Vfo, string> vfoMap = new Dictionary<Vfo, string> {
             { Vfo.A, "A" },
             { Vfo.B, "B" },
         };
 
-        public Task<bool> SetFrequency(Vfo vfo, Frequency frequency)
+        public Task SetFrequency(Vfo vfo, Frequency frequency)
         {
             lock (lockObj)
             {
                 serialPort.Write($"F{vfoMap[vfo]}{frequency:D11};");
-                freqHz = frequency;
+
+                if (vfo == Vfo.A)
+                {
+                    freqHzA = frequency;
+                }
+                else if (vfo == Vfo.B)
+                {
+                    freqHzB = frequency;
+                }
+                else throw new NotSupportedException(vfo.ToString());
+
                 while (true)
                 {
-                    if (ReadFrequencyFromRig() == frequency)
+                    if (ReadFrequencyFromRig(vfo) == frequency)
                     {
                         return Task.FromResult(true);
                     }
@@ -52,23 +74,31 @@ namespace NRig.Rigs.Kenwood
         {
             while (true)
             {
-                long hz = ReadFrequencyFromRig();
+                long hz1 = ReadFrequencyFromRig(Vfo.A);
 
-                if (hz == 0)
+                if (hz1 != 0)
                 {
-                    continue;
+                    if (freqHzA != hz1)
+                    {
+                        freqHzA = hz1;
+                    }
                 }
 
-                if (freqHz != hz)
+                long hz2 = ReadFrequencyFromRig(Vfo.B);
+
+                if (hz2 != 0)
                 {
-                    freqHz = hz;
+                    if (freqHzB != hz2)
+                    {
+                        freqHzB = hz2;
+                    }
                 }
 
                 Thread.Sleep(rigPollInterval);
             }
         }
 
-        private long ReadFrequencyFromRig()
+        private long ReadFrequencyFromRig(Vfo vfo)
         {
             string response;
 
@@ -76,7 +106,7 @@ namespace NRig.Rigs.Kenwood
             {
                 while (true)
                 {
-                    serialPort.Write("FA;");
+                    serialPort.Write($"F{vfoMap[vfo]};");
 
                     try
                     {
@@ -89,7 +119,7 @@ namespace NRig.Rigs.Kenwood
                 }
             }
 
-            if (!response.StartsWith("FA") || response.Length != 14 || !response.EndsWith(";"))
+            if (!response.StartsWith($"F{vfoMap[vfo]}") || response.Length != 14 || !response.EndsWith(";"))
             {
                 return 0;
             }
@@ -118,26 +148,26 @@ namespace NRig.Rigs.Kenwood
             return response;
         }
 
-        public Task<bool> BeginTransmitTuningCarrier(TimeSpan maxDuration) => throw new NotImplementedException();
-        public Task<bool> EndTransmitTuningCarrier() => throw new NotImplementedException();
-        public Task<AgcMode> GetAgcState() => throw new NotImplementedException();
-        public Task<bool> GetAttenuatorState() => throw new NotImplementedException();
-        public Task<Frequency> GetClarifierOffset() => throw new NotImplementedException();
-        public Task<bool> GetNoiseBlankerState() => throw new NotImplementedException();
-        public Task<bool> GetPreampState() => throw new NotImplementedException();
+        public Task SetActiveVfo(Vfo bfo) => throw new NotImplementedException();
+        public Task SetPttState(bool value) => throw new NotImplementedException();
         public Task<bool> GetPttState() => throw new NotImplementedException();
+        public Task SetMode(Vfo vfo, Mode mode) => throw new NotImplementedException();
+        public Task SetTunerState(bool value) => throw new NotImplementedException();
         public Task<bool> GetTunerState() => throw new NotImplementedException();
+        public Task RunTuningCycle() => throw new NotImplementedException();
         public Task<MeterReadings> ReadMeters() => throw new NotImplementedException();
-        public Task<bool> RunTuningCycle() => throw new NotImplementedException();
-        public Task<bool> SetActiveVfo(Vfo bfo) => throw new NotImplementedException();
-        public Task<bool> SetAgcState(AgcMode agcMode) => throw new NotImplementedException();
-        public Task<bool> SetAttenuatorState(bool value) => throw new NotImplementedException();
-        public Task<bool> SetClarifierOffset(Frequency frequency) => throw new NotImplementedException();
-        public Task<bool> SetMode(Vfo vfo, Mode mode) => throw new NotImplementedException();
-        public Task<bool> SetNoiseBlankerState(bool value) => throw new NotImplementedException();
-        public Task<bool> SetPreampState(bool value) => throw new NotImplementedException();
-        public Task<bool> SetPttState(bool value) => throw new NotImplementedException();
-        public Task<bool> SetTunerState(bool value) => throw new NotImplementedException();
+        public Task SetAgcState(AgcMode agcMode) => throw new NotImplementedException();
+        public Task<AgcMode> GetAgcState() => throw new NotImplementedException();
+        public Task SetNoiseBlankerState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetNoiseBlankerState() => throw new NotImplementedException();
+        public Task BeginTransmitTuningCarrier(TimeSpan maxDuration) => throw new NotImplementedException();
+        public Task EndTransmitTuningCarrier() => throw new NotImplementedException();
+        public Task SetAttenuatorState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetAttenuatorState() => throw new NotImplementedException();
+        public Task SetPreampState(bool value) => throw new NotImplementedException();
+        public Task<bool> GetPreampState() => throw new NotImplementedException();
+        public Task SetClarifierOffset(Frequency frequency) => throw new NotImplementedException();
+        public Task<Frequency> GetClarifierOffset() => throw new NotImplementedException();
 
         public void Dispose() => Dispose(true);
 
