@@ -14,16 +14,16 @@ jobs:
         with:
           dotnet-version: 3.0.100
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release NRig.sln
       - name: Test with dotnet
-        run: dotnet test
+        run: dotnet test NRig.sln
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Pack nuget Package
-        run: dotnet pack --configuration Release
+        run: dotnet pack --configuration Release NRig.sln
       - name: Push package to nuget
         run: dotnet nuget push **/*.nupkg
               --api-key ${{ secrets.NUGET_DEPLOY_KEY }}
