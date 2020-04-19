@@ -26,3 +26,11 @@ TODO
 # Contributing
 Fork, hack away, send me a PR.
 Increment the version number in the .csproj as necessary.
+
+# Other libraries
+- Hamlib - Win32, Win64, Linux. Looks good. https://github.com/Hamlib/Hamlib. There's mono bindings too: https://github.com/k5jae/HamLibSharp
+- OmniRig - Delphi, 32 bit limitation - max frequency it can handle is 2.147483647 GHz. http://dxatlas.com/OmniRig/Files/OmniRig.zip http://dxatlas.com/OmniRig/Files/RigIni.zip
+
+## Things that aren't libraries
+- flrig is a rig control gui that talks directly to rigs. However it has an XML-RPC over HTTP API. A rig implementation for NRig could be built to talk to this.
+- rigctld is (I think) a frontend for Hamlib that accepts commands via TCP. A rig implementation for NRig could be built to talk to this, though just consuming Hamlib directly might be simpler.
