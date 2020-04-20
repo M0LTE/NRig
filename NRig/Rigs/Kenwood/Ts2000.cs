@@ -12,10 +12,11 @@ namespace NRig.Rigs.Kenwood
         public event EventHandler<FrequencyEventArgs> FrequencyChanged;
 
         private readonly SerialPort serialPort;
-        private readonly TimeSpan rigPollInterval;
+        private TimeSpan rigPollInterval;
         private readonly object lockObj = new object();
         private long freqHzA;
         private long freqHzB;
+        private Action<RigStatus> rigStatusCallback;
 
         public Ts2000(string comPort, int baudRate, TimeSpan rigPollInterval)
         {
@@ -26,6 +27,20 @@ namespace NRig.Rigs.Kenwood
             serialPort.Open();
 
             Task.Factory.StartNew(PollRig, TaskCreationOptions.LongRunning);
+        }
+
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
+        {
+            rigStatusCallback = callback;
+            rigPollInterval = updateFrequency;
+
+            return Task.CompletedTask;
+        }
+
+        public Task EndRigStatusUpdates()
+        {
+            rigStatusCallback = null;
+            return Task.CompletedTask;
         }
 
         public Task<Frequency> GetFrequency(Vfo vfo)
@@ -105,6 +120,11 @@ namespace NRig.Rigs.Kenwood
                         freqHzB = hz2;
                     }
                 }
+
+                rigStatusCallback?.Invoke(new RigStatus { 
+                    VfoA = new VfoStatus { Frequency = hz1 },
+                    VfoB = new VfoStatus { Frequency = hz2 },
+                });
 
                 Thread.Sleep(rigPollInterval);
             }

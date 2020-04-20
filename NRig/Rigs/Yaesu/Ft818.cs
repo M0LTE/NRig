@@ -14,9 +14,10 @@ namespace NRig.Rigs.Yaesu
 
         private readonly SerialPort serialPort;
         private readonly static byte[] freqRequestCommand = new byte[] { 0, 0, 0, 0, 0x03 };
-        private readonly TimeSpan rigPollInterval;
+        private TimeSpan rigPollInterval;
         private readonly static object lockObj = new object();
         private long freqHz;
+        private Action<RigStatus> rigStatusCallback;
 
         public Ft818(string comPort, int baudRate, TimeSpan rigPollInterval)
         {
@@ -26,6 +27,20 @@ namespace NRig.Rigs.Yaesu
             serialPort.Open();
 
             Task.Factory.StartNew(PollRig, TaskCreationOptions.LongRunning);
+        }
+
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
+        {
+            rigStatusCallback = callback;
+            rigPollInterval = updateFrequency;
+
+            return Task.CompletedTask;
+        }
+
+        public Task EndRigStatusUpdates()
+        {
+            rigStatusCallback = null;
+            return Task.CompletedTask;
         }
 
         private void PollRig()
@@ -51,6 +66,10 @@ namespace NRig.Rigs.Yaesu
                     }
                     freqHz = hz;
                 }
+
+                //TODO: all the other rig status calls
+
+                rigStatusCallback?.Invoke(new RigStatus { VfoA = new VfoStatus { Frequency = hz } });
 
                 Thread.Sleep(rigPollInterval);
             }
@@ -208,9 +227,6 @@ namespace NRig.Rigs.Yaesu
 
         public void Dispose() => Dispose(true);
         private bool disposedValue;
-
-        
-
         private void Dispose(bool disposing)
         {
             if (!disposedValue)
