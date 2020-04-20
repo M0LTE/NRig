@@ -46,6 +46,18 @@ namespace NRig
         public bool Attenuator { get; set; }
         public bool Preamp { get; set; }
         public Frequency ClarifierOffset { get; set; }
+
+        public override int GetHashCode()
+        {
+            //TODO: lots more here
+            return VfoA.Frequency.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            //TODO: lots more here
+            return obj is RigStatus other && other.VfoA.Frequency == VfoA.Frequency;
+        }
     }
 
     public class VfoStatus
