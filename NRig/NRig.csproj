@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +19,7 @@
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
     <Authors>Tom Fanning</Authors>
     <Company>Tom Fanning Limited</Company>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>

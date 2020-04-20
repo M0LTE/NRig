@@ -1,6 +1,11 @@
-﻿namespace NRig
+﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace NRig
 {
-    public struct Frequency
+    [JsonConverter(typeof(FrequencyConverter))]
+    public class Frequency
     {
         private long ValueHz { get; set; }
 
@@ -17,5 +22,12 @@
         public static Frequency MHz(long mHz) => new Frequency { ValueHz = mHz * 1000000 };
         public static Frequency GHz(long gHz) => new Frequency { ValueHz = gHz * 1000000000 };
         public static Frequency THz(long tHz) => new Frequency { ValueHz = tHz * 1000000000000 };
+
+        private class FrequencyConverter : JsonConverter<Frequency>
+        {
+            public override Frequency Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => Frequency.Hz(reader.GetInt64());
+
+            public override void Write(Utf8JsonWriter writer, Frequency value, JsonSerializerOptions options) => writer.WriteNumberValue(value);
+        }
     }
 }
