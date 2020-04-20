@@ -14,14 +14,13 @@ namespace NRig.Rigs.Yaesu
 
         private readonly SerialPort serialPort;
         private readonly static byte[] freqRequestCommand = new byte[] { 0, 0, 0, 0, 0x03 };
-        private TimeSpan rigPollInterval;
+        private TimeSpan rigPollInterval = TimeSpan.FromSeconds(1);
         private readonly static object lockObj = new object();
         private long freqHz;
         private Action<RigStatus> rigStatusCallback;
 
-        public Ft818(string comPort, int baudRate, TimeSpan rigPollInterval)
+        public Ft818(string comPort, int baudRate)
         {
-            this.rigPollInterval = rigPollInterval;
             serialPort = new SerialPort(comPort, baudRate, Parity.None, 8, StopBits.Two);
             serialPort.ReadTimeout = 1000;
             serialPort.Open();

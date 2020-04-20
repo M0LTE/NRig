@@ -12,16 +12,14 @@ namespace NRig.Rigs.Kenwood
         public event EventHandler<FrequencyEventArgs> FrequencyChanged;
 
         private readonly SerialPort serialPort;
-        private TimeSpan rigPollInterval;
+        private TimeSpan rigPollInterval = TimeSpan.FromSeconds(1);
         private readonly object lockObj = new object();
         private long freqHzA;
         private long freqHzB;
         private Action<RigStatus> rigStatusCallback;
 
-        public Ts2000(string comPort, int baudRate, TimeSpan rigPollInterval)
+        public Ts2000(string comPort, int baudRate)
         {
-            this.rigPollInterval = rigPollInterval;
-
             serialPort = new SerialPort(comPort, baudRate);
             serialPort.ReadTimeout = 500;
             serialPort.Open();
