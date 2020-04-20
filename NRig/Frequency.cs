@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace NRig
 {
     [JsonConverter(typeof(FrequencyConverter))]
-    public class Frequency
+    public struct Frequency
     {
         private long ValueHz { get; set; }
 

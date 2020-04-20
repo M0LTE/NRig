@@ -40,7 +40,6 @@ namespace NRig
         public Vfo ActiveVfo { get; set; }
         public bool Ptt { get; set; }
         public bool Tuner { get; set; }
-        public MeterReadings MeterReadings { get; set; }
         public AgcMode Agc { get; set; }
         public bool NoiseBlanker { get; set; }
         public bool Attenuator { get; set; }
@@ -49,14 +48,31 @@ namespace NRig
 
         public override int GetHashCode()
         {
-            //TODO: lots more here
-            return VfoA.Frequency.GetHashCode();
+            return (VfoA == null ? 0 : VfoA.GetHashCode())
+                ^ (VfoB == null ? 0 : VfoB.GetHashCode())
+                ^ ActiveVfo.GetHashCode()
+                ^ Ptt.GetHashCode()
+                ^ Tuner.GetHashCode()
+                ^ Agc.GetHashCode()
+                ^ NoiseBlanker.GetHashCode()
+                ^ Attenuator.GetHashCode()
+                ^ Preamp.GetHashCode()
+                ^ (ClarifierOffset == null ? 0 : ClarifierOffset.GetHashCode());
         }
 
         public override bool Equals(object obj)
         {
-            //TODO: lots more here
-            return obj is RigStatus other && other.VfoA.Frequency == VfoA.Frequency;
+            return obj is RigStatus other
+                && other.VfoA.Equals(VfoA)
+                && other.VfoB.Equals(VfoB)
+                && other.ActiveVfo == ActiveVfo
+                && other.Ptt == Ptt
+                && other.Tuner == Tuner
+                && other.Agc == Agc
+                && other.NoiseBlanker == NoiseBlanker
+                && other.Attenuator == Attenuator
+                && other.Preamp == Preamp
+                && other.ClarifierOffset == ClarifierOffset;
         }
     }
 
@@ -64,6 +80,12 @@ namespace NRig
     {
         public Frequency Frequency { get; set; }
         public Mode Mode { get; set; }
+
+        public override bool Equals(object obj) => obj is VfoStatus other
+                && other.Frequency == Frequency
+                && other.Mode == Mode;
+
+        public override int GetHashCode() => Frequency.GetHashCode() ^ Mode.GetHashCode();
     }
 
     public class FrequencyEventArgs : EventArgs
