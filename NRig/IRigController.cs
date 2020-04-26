@@ -31,6 +31,10 @@ namespace NRig
         Task<Frequency> GetClarifierOffset();
         Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency);
         Task EndRigStatusUpdates();
+        Task SetCtcss(Frequency? frequency);
+        Task<(bool enabled, Frequency tone)> GetCtcssState();
+        Task<(bool enabled, Frequency offset)> GetRepeaterShiftState();
+        Task SetRepeaterShift(Frequency? frequency);
     }
 
     public class RigStatus
@@ -45,6 +49,11 @@ namespace NRig
         public bool Attenuator { get; set; }
         public bool Preamp { get; set; }
         public Frequency ClarifierOffset { get; set; }
+        public bool Squelched { get; set; }
+        public Frequency Ctcss { get; set; }
+        public bool CtcssEnabled { get; set; }
+        public Frequency RepeaterShift { get; set; }
+        public bool RepeaterShiftEnabled { get; set; }
 
         public override int GetHashCode()
         {
@@ -57,7 +66,12 @@ namespace NRig
                 ^ NoiseBlanker.GetHashCode()
                 ^ Attenuator.GetHashCode()
                 ^ Preamp.GetHashCode()
-                ^ (ClarifierOffset == null ? 0 : ClarifierOffset.GetHashCode());
+                ^ (ClarifierOffset == null ? 0 : ClarifierOffset.GetHashCode())
+                ^ Squelched.GetHashCode()
+                ^ Ctcss.GetHashCode()
+                ^ CtcssEnabled.GetHashCode()
+                ^ RepeaterShift.GetHashCode()
+                ^ RepeaterShiftEnabled.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -72,7 +86,12 @@ namespace NRig
                 && other.NoiseBlanker == NoiseBlanker
                 && other.Attenuator == Attenuator
                 && other.Preamp == Preamp
-                && other.ClarifierOffset == ClarifierOffset;
+                && other.ClarifierOffset == ClarifierOffset
+                && other.Squelched == Squelched
+                && other.Ctcss == Ctcss
+                && other.CtcssEnabled == CtcssEnabled
+                && other.RepeaterShift == RepeaterShift
+                && other.RepeaterShiftEnabled == RepeaterShiftEnabled;
         }
     }
 

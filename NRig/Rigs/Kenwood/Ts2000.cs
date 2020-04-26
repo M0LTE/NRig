@@ -14,8 +14,8 @@ namespace NRig.Rigs.Kenwood
         private readonly SerialPort serialPort;
         private TimeSpan rigPollInterval = TimeSpan.FromSeconds(1);
         private readonly object lockObj = new object();
-        private long freqHzA;
-        private long freqHzB;
+        private Frequency freqHzA;
+        private Frequency freqHzB;
         private Action<RigStatus> rigStatusCallback;
 
         public Ts2000(string comPort, int baudRate)
@@ -119,7 +119,8 @@ namespace NRig.Rigs.Kenwood
                     }
                 }
 
-                rigStatusCallback?.Invoke(new RigStatus { 
+                rigStatusCallback?.Invoke(new RigStatus
+                {
                     VfoA = new VfoStatus { Frequency = hz1 },
                     VfoB = new VfoStatus { Frequency = hz2 },
                 });
@@ -198,6 +199,10 @@ namespace NRig.Rigs.Kenwood
         public Task<bool> GetPreampState() => throw new NotImplementedException();
         public Task SetClarifierOffset(Frequency frequency) => throw new NotImplementedException();
         public Task<Frequency> GetClarifierOffset() => throw new NotImplementedException();
+        public Task SetCtcss(Frequency? frequency) => throw new NotImplementedException();
+        public Task<(bool enabled, Frequency tone)> GetCtcssState() => throw new NotImplementedException();
+        public Task<(bool enabled, Frequency offset)> GetRepeaterShiftState() => throw new NotImplementedException();
+        public Task SetRepeaterShift(Frequency? frequency) => throw new NotImplementedException();
 
         public void Dispose() => Dispose(true);
 

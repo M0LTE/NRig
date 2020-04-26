@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/NRig.Cli/Properties/launchSettings.json
+/NRig.Cli/deploy.cmd

@@ -2,6 +2,8 @@
 {
     public enum Mode
     {
-        Usb, UsbData, Lsb, Fm, UsbCw, Am
+        Usb, UsbData, Lsb, Fm, UsbCw, LsbCw, Am,
+        BroadcastFm,
+        Packet,
     }
 }
