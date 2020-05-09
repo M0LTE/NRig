@@ -46,5 +46,35 @@ namespace NRig.Rigs.OmniRig
                 disposedValue = true;
             }
         }
+
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task EndRigStatusUpdates()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetCtcss(Frequency? frequency)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<(bool enabled, Frequency tone)> GetCtcssState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<(bool enabled, Frequency offset)> GetRepeaterShiftState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetRepeaterShift(Frequency? frequency)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

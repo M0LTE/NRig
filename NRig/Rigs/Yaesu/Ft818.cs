@@ -262,15 +262,15 @@ namespace NRig.Rigs.Yaesu
 
             //const byte dcsOn = 0x0a;
             //const byte encodeAndDecodeCtcssOn = 0x2a; // T+SQL
-            const byte encodeCtcssOn = 0x4a; // T
-            const byte off = 0x8a;
-            const byte ctcssStateOpcode = 0x0a;
+            const byte value_ctcssOn = 0x4a; // T
+            const byte value_ctcssOff = 0x8a;
+            const byte opcode_ctcssState = 0x0a;
 
             lock (rigCommunicationLock)
             {
-                byte cmd1_p1 = frequency == null ? off : encodeCtcssOn;
+                //byte cmd1_p1 = frequency == null ? value_ctcssOff : value_ctcssOn;
 
-                serialPort.Write(cmd1_p1, 0, 0, 0, ctcssStateOpcode);
+                serialPort.Write(value_ctcssOff, 0, 0, 0, opcode_ctcssState);
                 serialPort.ReadByte(); // f0 if tone was on and turning on, 00 if tone was off and turning on...
 
                 if (frequency != null)
@@ -282,6 +282,11 @@ namespace NRig.Rigs.Yaesu
                     byte cmd2_p2 = GetByteCtcss(2, frequency.Value);
 
                     serialPort.Write(cmd2_p1, cmd2_p2, 0, 0, ctcssFreqOpcode);
+
+                    serialPort.ReadByte();
+
+                    //serialPort.Write(value_ctcssOn, 0, 0, 0, opcode_ctcssState);
+                    //serialPort.ReadByte();
                 }
             }
 

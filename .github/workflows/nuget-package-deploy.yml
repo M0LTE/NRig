@@ -25,7 +25,7 @@ jobs:
       - name: Pack nuget Package
         run: dotnet pack --configuration Release NRig.sln
       - name: Push package to nuget
-        run: dotnet nuget push **/*.nupkg
+        run: dotnet nuget push **/nrig.*.nupkg
               --api-key ${{ secrets.NUGET_DEPLOY_KEY }}
               --source https://api.nuget.org/v3/index.json
               --skip-duplicate

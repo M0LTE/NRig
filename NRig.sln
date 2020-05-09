@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRig.Cli", "NRig.Cli\NRig.Cli.csproj", "{9182B3A1-18FE-4C4F-8DAC-CB878E1CB2CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRig.Tests", "NRig.Tests\NRig.Tests.csproj", "{77517D37-9970-403A-8D57-4F7EB7F43BE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRig.Tests", "NRig.Tests\NRig.Tests.csproj", "{77517D37-9970-403A-8D57-4F7EB7F43BE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
