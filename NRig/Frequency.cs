@@ -11,6 +11,7 @@ namespace NRig
 
         public static implicit operator long(Frequency frequency) => (long)frequency.ValueHz;
         public static implicit operator decimal(Frequency frequency) => frequency.ValueHz;
+        public static implicit operator double(Frequency frequency) => (double)frequency.ValueHz;
         public static implicit operator Frequency(decimal hz) => Hz(hz);
         public static implicit operator Frequency(double hz) => Hz((decimal)hz);
         public static implicit operator Frequency(long hz) => Hz((decimal)hz);
