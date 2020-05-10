@@ -18,7 +18,8 @@ namespace NRig.Cli
 
             (args, port, baud) = GetPort(args);
 
-            rig = new Ft818(port, baud);
+            //rig = new Ft818(port, baud);
+            rig = new NRig.Rigs.Hamlib.HamLibWrapper("FT-857", "COM12");
 
             try
             {

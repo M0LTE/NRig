@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRig.Cli", "NRig.Cli\NRig.Cli.csproj", "{9182B3A1-18FE-4C4F-8DAC-CB878E1CB2CA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRig.Tests", "NRig.Tests\NRig.Tests.csproj", "{77517D37-9970-403A-8D57-4F7EB7F43BE8}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{C1274245-DC84-4584-A378-58F942139BE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1274245-DC84-4584-A378-58F942139BE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1274245-DC84-4584-A378-58F942139BE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9182B3A1-18FE-4C4F-8DAC-CB878E1CB2CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9182B3A1-18FE-4C4F-8DAC-CB878E1CB2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9182B3A1-18FE-4C4F-8DAC-CB878E1CB2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9182B3A1-18FE-4C4F-8DAC-CB878E1CB2CA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77517D37-9970-403A-8D57-4F7EB7F43BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77517D37-9970-403A-8D57-4F7EB7F43BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77517D37-9970-403A-8D57-4F7EB7F43BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU

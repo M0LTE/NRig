@@ -14,10 +14,24 @@ namespace NRig.Rigs.Hamlib
             rig.Open(port);
         }
 
-        //TODO: implement this. Either consume or derive from https://github.com/k5jae/HamLibSharp
-
         public Task<Frequency> GetFrequency(Vfo vfo) => throw new NotImplementedException();
-        public Task SetFrequency(Vfo vfo, Frequency frequency) => throw new NotImplementedException();
+        public Task SetFrequency(Vfo vfo, Frequency frequency)
+        {
+            rig.SetFrequency(frequency, GetVfo(vfo));
+            return Task.CompletedTask;
+        }
+
+        private int GetVfo(Vfo vfo)
+        {
+            switch (vfo)
+            {
+                case Vfo.A: return RigVfo.VfoA;
+                case Vfo.B: return RigVfo.VfoB;
+            }
+
+            throw new NotImplementedException();
+        }
+
         public Task SetActiveVfo(Vfo bfo) => throw new NotImplementedException();
         public Task SetPttState(bool value) => throw new NotImplementedException();
         public Task<bool> GetPttState() => throw new NotImplementedException();

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NRig\NRig.csproj" />
+    <PackageReference Include="NRig.Hamlib" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
