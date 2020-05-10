@@ -22,10 +22,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Pack nuget Package
+      - name: Pack NRig package
         run: dotnet pack --configuration Release NRig.sln
-      - name: Push package to nuget
+      - name: Push NRig package to nuget
         run: dotnet nuget push **/nrig.*.nupkg
               --api-key ${{ secrets.NUGET_DEPLOY_KEY }}
               --source https://api.nuget.org/v3/index.json
               --skip-duplicate
+              -n 1
+      - name: Pack NRig.Hamlib package
+        run: dotnet pack --configuration Release NRig.Hamlib
+      - name: Push NRig.Hamlib package to nuget
+        run: dotnet nuget push **/nrig.hamlib.*.nupkg
+              --api-key ${{ secrets.NUGET_DEPLOY_KEY }}
+              --source https://api.nuget.org/v3/index.json
+              --skip-duplicate
+              -n 1
