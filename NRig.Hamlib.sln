@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRig.Hamlib", "NRig.Hamlib\NRig.Hamlib.csproj", "{87668082-0C87-48F5-BEC2-55BDA4A92D3F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRig.Hamlib.Harness", "NRig.Hamlib.Harness\NRig.Hamlib.Harness.csproj", "{416BB3CD-624C-4AE8-93A7-4F93960420F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{87668082-0C87-48F5-BEC2-55BDA4A92D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87668082-0C87-48F5-BEC2-55BDA4A92D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87668082-0C87-48F5-BEC2-55BDA4A92D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{416BB3CD-624C-4AE8-93A7-4F93960420F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{416BB3CD-624C-4AE8-93A7-4F93960420F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{416BB3CD-624C-4AE8-93A7-4F93960420F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{416BB3CD-624C-4AE8-93A7-4F93960420F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -340,3 +340,4 @@ ASALocalRun/
 healthchecksdb
 /NRig.Cli/Properties/launchSettings.json
 /NRig.Cli/deploy.cmd
+/NRig.Hamlib.Harness/Properties/launchSettings.json
