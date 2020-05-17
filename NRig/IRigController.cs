@@ -77,8 +77,8 @@ namespace NRig
         public override bool Equals(object obj)
         {
             return obj is RigStatus other
-                && other.VfoA.Equals(VfoA)
-                && other.VfoB.Equals(VfoB)
+                && ((other.VfoA == null && VfoA == null) || other.VfoA.Equals(VfoA))
+                && ((other.VfoB == null && VfoB == null) || other.VfoB.Equals(VfoB))
                 && other.ActiveVfo == ActiveVfo
                 && other.Ptt == Ptt
                 && other.Tuner == Tuner
