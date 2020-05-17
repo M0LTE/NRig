@@ -34,7 +34,7 @@ namespace NRig
         public static Frequency GHz(decimal gHz) => new Frequency { ValueHz = gHz * 1000000000 };
         public static Frequency THz(decimal tHz) => new Frequency { ValueHz = tHz * 1000000000000 };
 
-        public string ToString(FrequencyStyle frequencyStyle, int digits)
+        public string ToString(FrequencyStyle frequencyStyle)
         {
             if (frequencyStyle == FrequencyStyle.Yaesu)
             {

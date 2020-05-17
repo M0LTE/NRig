@@ -22,7 +22,7 @@ namespace NRig.Tests
         public void TestYaesuStandard(double hz, string expected)
         {
             var freq = Frequency.Hz(hz);
-            Assert.Equal(expected, freq.ToString(FrequencyStyle.Yaesu, 8));
+            Assert.Equal(expected, freq.ToString(FrequencyStyle.Yaesu));
         }
     }
 }
