@@ -19,7 +19,7 @@
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <Authors>Tom Fanning</Authors>
     <Company>Tom Fanning Limited</Company>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
