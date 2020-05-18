@@ -341,3 +341,9 @@ healthchecksdb
 /NRig.Cli/Properties/launchSettings.json
 /NRig.Cli/deploy.cmd
 /NRig.Hamlib.Harness/Properties/launchSettings.json
+/NRig.Hamlib.Harness/hamlib-harness
+/NRig.Hamlib.Harness/hamlib-harness.exe
+/NRig.Hamlib.Harness/libgcc_s_seh-1.dll
+/NRig.Hamlib.Harness/libhamlib-2.dll
+/NRig.Hamlib.Harness/libusb-1.0.dll
+/NRig.Hamlib.Harness/libwinpthread-1.dll

@@ -1,16 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
+    <AssemblyName>hamlib-harness</AssemblyName>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="hamlib-harness" />
+    <None Remove="hamlib-harness.exe" />
+    <None Remove="hamlib-harness.pdb" />
+    <None Remove="libgcc_s_seh-1.dll" />
+    <None Remove="libhamlib-2.dll" />
+    <None Remove="libusb-1.0.dll" />
+    <None Remove="libwinpthread-1.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NRig.Hamlib\NRig.Hamlib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NRig" Version="1.1.2" />
+    <PackageReference Include="NRig" Version="1.1.5" />
   </ItemGroup>
 
 </Project>

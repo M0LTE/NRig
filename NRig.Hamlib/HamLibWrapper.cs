@@ -13,6 +13,9 @@ namespace NRig.Rigs.Hamlib
             hamLibWrapper = new HamLibWrapperInternal(rigName, port);
         }
 
+        public static string NativeVersion => HamLib.NativeVersion;
+        public static Version ManagedVersion => HamLib.ManagedVersion;
+
         public event EventHandler<FrequencyEventArgs> FrequencyChanged
         {
             add

@@ -1,16 +1,17 @@
 ﻿using HamLibSharp;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NRig.Rigs.Hamlib
 {
     internal class HamLibWrapperInternal : IRigController
     {
-        private readonly Rig rig;
+        private readonly IHamlibRig rig;
 
         public HamLibWrapperInternal(string rigName, string port)
         {
-            rig = new Rig(rigName);
+            rig = new HamlibRigFacade(rigName);
             rig.Open(port);
         }
 
@@ -48,14 +49,14 @@ namespace NRig.Rigs.Hamlib
 
         public Task SetMode(Vfo vfo, Mode mode)
         {
-            var rm = GetRigMode(mode);
+            var rm = GetHamlibMode(mode);
             rig.SetMode(rm, rig.PassbandNormal(rm), GetVfo(vfo));
             return Task.CompletedTask;
         }
 
-        private RigMode GetRigMode(Mode mode)
+        private static RigMode GetHamlibMode(Mode nrigMode)
         {
-            switch (mode)
+            switch (nrigMode)
             {
                 case Mode.Am: return RigMode.AM;
                 case Mode.BroadcastFm: return RigMode.WFM;
@@ -68,7 +69,25 @@ namespace NRig.Rigs.Hamlib
                 case Mode.UsbData: return RigMode.PacketUSB;
             }
 
-            throw new NotImplementedException($"NRig mode {mode} not mapped to HamLib mode");
+            throw new NotImplementedException($"NRig mode {nrigMode} not mapped to HamLib mode");
+        }
+
+        private static Mode GetNRigMode(RigMode hamlibMode)
+        {
+            switch (hamlibMode)
+            {
+                case RigMode.AM: return Mode.Am;
+                case RigMode.WFM: return Mode.BroadcastFm;
+                case RigMode.FM: return Mode.Fm;
+                case RigMode.LSB: return Mode.Lsb;
+                case RigMode.CWR: return Mode.LsbCw;
+                case RigMode.PacketFM: return Mode.Packet;
+                case RigMode.USB: return Mode.Usb;
+                case RigMode.CW: return Mode.UsbCw;
+                case RigMode.PacketUSB: return Mode.UsbData;
+            }
+
+            throw new NotImplementedException($"Hamlib mode {hamlibMode} not mapped to NRig mode");
         }
 
         public Task SetTunerState(bool value) => throw new NotImplementedException();
@@ -105,14 +124,37 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
+        Timer timer;
+
         public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
         {
-            throw new NotImplementedException();
+            timer = new Timer(Tick, callback, TimeSpan.Zero, updateFrequency);
+
+            return Task.CompletedTask;
+        }
+
+        private void Tick(object state)
+        {
+            Action<RigStatus> callback = (Action<RigStatus>)state;
+
+            long width = default;
+            var rigStatus = new RigStatus
+            {
+                VfoA = new VfoStatus
+                {
+                    Frequency = Frequency.Hz(rig.GetFrequency(RigVfo.Current)),
+                    Mode = GetNRigMode(rig.GetMode(ref width, RigVfo.Current))
+                }
+            };
+
+            callback(rigStatus);
         }
 
         public Task EndRigStatusUpdates()
         {
-            throw new NotImplementedException();
+            timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            
+            return Task.CompletedTask;
         }
 
         public Task SetCtcss(Frequency? frequency)
