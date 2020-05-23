@@ -41,7 +41,7 @@ namespace NRig.Rigs.Hamlib
 
         public Task SetPttState(bool value)
         {
-            rig.SetPtt(PttMode.OnData, RigVfo.Current);
+            rig.SetPtt(value ? PttMode.On : PttMode.Off, RigVfo.Current);
             return Task.CompletedTask;
         }
 
@@ -144,7 +144,8 @@ namespace NRig.Rigs.Hamlib
                 {
                     Frequency = Frequency.Hz(rig.GetFrequency(RigVfo.Current)),
                     Mode = GetNRigMode(rig.GetMode(ref width, RigVfo.Current))
-                }
+                },
+                Ptt = rig.GetPtt(RigVfo.Current) != PttMode.Off,
             };
 
             callback(rigStatus);

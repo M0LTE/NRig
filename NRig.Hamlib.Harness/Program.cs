@@ -1,5 +1,6 @@
 ﻿using NRig.Rigs.Hamlib;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace NRig.Hamlib.Harness
         static async Task Main(string[] args)
         {
             Console.WriteLine($"Codebase: {typeof(Program).Assembly.CodeBase.Replace("file:///", "")}");
+            HandleHamlib();
             Console.WriteLine($"Managed version: {HamLibWrapper.ManagedVersion}");
             Console.WriteLine($"Native version:  {HamLibWrapper.NativeVersion}");
 
@@ -23,11 +25,13 @@ namespace NRig.Hamlib.Harness
                 {
                     if (oldStatus == null || !oldStatus.Equals(status))
                     {
-
                         Console.SetCursorPosition(0, 0);
                         Console.Write(status.VfoA.Frequency.ToString(FrequencyStyle.Yaesu));
+                        Console.SetCursorPosition(0, 1);
+                        Console.ForegroundColor = status.Ptt ? ConsoleColor.Red : ConsoleColor.Green;
+                        Console.Write(status.Ptt ? "TX" : "RX");
+                        Console.ResetColor();
                         oldStatus = status;
-
                     }
                 }
             }, TimeSpan.FromSeconds(0.1));
@@ -53,6 +57,37 @@ namespace NRig.Hamlib.Harness
                 {
                     await rig.SetRepeaterShift(null);
                 }
+                else if (key.Key == ConsoleKey.P)
+                {
+                    await rig.SetPttState(!oldStatus.Ptt);
+                }
+            }
+        }
+
+        private static void HandleHamlib()
+        {
+            var codebase = typeof(Program).Assembly.CodeBase.Replace("file://", "");
+            Console.WriteLine($"Codebase: {codebase}");
+            var runningFromDir = Path.GetDirectoryName(codebase);
+            const string renamedLibFilename = "libhamlib-2.dll.so";
+            const string unrenamedLibFilename = "libhamlib.so.2";
+            var targetLib = Path.Combine(runningFromDir, renamedLibFilename);
+            var unrenamedSourceLib = Path.Combine(Environment.CurrentDirectory, unrenamedLibFilename);
+            var renamedSourceLib = Path.Combine(Environment.CurrentDirectory, renamedLibFilename);
+            if (File.Exists(renamedSourceLib))
+            {
+                File.Copy(renamedSourceLib, targetLib, true);
+                Console.WriteLine($"Copied {renamedSourceLib} to {targetLib}");
+            }
+            else if (File.Exists(unrenamedSourceLib))
+            {
+                File.Copy(unrenamedSourceLib, targetLib, true);
+                Console.WriteLine($"Copied {unrenamedSourceLib} to {targetLib}");
+            }
+
+            if (!File.Exists(targetLib))
+            {
+                Console.WriteLine($"Warning: {targetLib} not found- hamlib needs to be installed system-wide or {renamedSourceLib} or {unrenamedSourceLib} needs to exist.");
             }
         }
     }

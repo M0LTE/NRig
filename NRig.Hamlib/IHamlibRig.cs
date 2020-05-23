@@ -16,5 +16,6 @@ namespace NRig.Rigs.Hamlib
         void SetRepeaterOffset(int rptr_offs, int vfo);
         void SetRepeaterShift(RepeaterShift rptr_shift, int vfo);
         void SetVFO(int v);
+        PttMode GetPtt(int vfo);
     }
 }

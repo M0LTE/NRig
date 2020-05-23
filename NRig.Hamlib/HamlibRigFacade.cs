@@ -38,11 +38,19 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
-        public void SetPtt(PttMode onData, int current)
+        public void SetPtt(PttMode ptt, int vfo)
         {
             lock (lockObj)
             {
-                rig.SetPtt(onData, current);
+                rig.SetPtt(ptt, vfo);
+            }
+        }
+
+        public PttMode GetPtt(int vfo)
+        {
+            lock (lockObj)
+            {
+                return rig.GetPtt(vfo);
             }
         }
 
