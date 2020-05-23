@@ -27,10 +27,18 @@ namespace NRig.Hamlib.Harness
                     {
                         Console.SetCursorPosition(0, 0);
                         Console.Write(status.VfoA.Frequency.ToString(FrequencyStyle.Yaesu));
+                        
                         Console.SetCursorPosition(0, 1);
                         Console.ForegroundColor = status.Ptt ? ConsoleColor.Red : ConsoleColor.Green;
                         Console.Write(status.Ptt ? "TX" : "RX");
                         Console.ResetColor();
+
+                        Console.SetCursorPosition(0, 2);
+                        Console.Write($"CTCSS {(status.CtcssEnabled ? "on " : "off")} {status.Ctcss}    ");
+
+                        Console.SetCursorPosition(0, 3);
+                        Console.Write($"RPT   {(status.RepeaterShiftEnabled ? "on " : "off")} {status.RepeaterShift}    ");
+
                         oldStatus = status;
                     }
                 }
@@ -43,7 +51,7 @@ namespace NRig.Hamlib.Harness
                 var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.C)
                 {
-                    await rig.SetCtcss(Frequency.Hz(118.8));
+                    await rig.SetCtcss(Frequency.Hz(114.8));
                 } 
                 else if (key.Key == ConsoleKey.N)
                 {

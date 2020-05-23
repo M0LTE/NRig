@@ -46,6 +46,14 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
+        public uint GetCtcss(int vfo)
+        {
+            lock (lockObj)
+            {
+                return rig.GetCTCSS(vfo);
+            }
+        }
+
         public PttMode GetPtt(int vfo)
         {
             lock (lockObj)
@@ -104,6 +112,22 @@ namespace NRig.Rigs.Hamlib
             lock (lockObj)
             {
                 rig.SetRepeaterOffset(rptr_offs, vfo);
+            }
+        }
+
+        public int GetRepeaterOffset(int vfo)
+        {
+            lock (lockObj)
+            {
+                return rig.GetRepeaterOffset(vfo);
+            }
+        }
+
+        public RepeaterShift GetRepeaterShift(int vfo)
+        {
+            lock (lockObj)
+            {
+                return rig.GetRepeaterShift(vfo);
             }
         }
     }

@@ -11,20 +11,22 @@ namespace NRig.Rigs.Hamlib
 
         public HamLibWrapperInternal(string rigName, string port)
         {
-            rig = new HamlibRigFacade(rigName);
+            rig = new CapabilityFakingHamLibRig(new HamlibRigFacade(rigName));
             rig.Open(port);
         }
 
-        public Task<Frequency> GetFrequency(Vfo vfo) => throw new NotImplementedException();
+        public Task<Frequency> GetFrequency(Vfo vfo) => Task.FromResult(Frequency.Hz(rig.GetFrequency(RigVfo.Current)));
         public Task SetFrequency(Vfo vfo, Frequency frequency)
         {
-            rig.SetFrequency(frequency, GetVfo(vfo));
+            rig.SetFrequency(frequency, GetHamlibVfo(vfo));
             return Task.CompletedTask;
         }
 
-        private int GetVfo(Vfo vfo)
+        private int GetHamlibVfo(Vfo nrigVfo)
         {
-            switch (vfo)
+            return RigVfo.Current;
+
+            switch (nrigVfo)
             {
                 case Vfo.A: return RigVfo.VfoA;
                 case Vfo.B: return RigVfo.VfoB;
@@ -35,7 +37,7 @@ namespace NRig.Rigs.Hamlib
 
         public Task SetActiveVfo(Vfo vfo)
         {
-            rig.SetVFO(GetVfo(vfo));
+            rig.SetVFO(GetHamlibVfo(vfo));
             return Task.CompletedTask;
         }
 
@@ -45,12 +47,12 @@ namespace NRig.Rigs.Hamlib
             return Task.CompletedTask;
         }
 
-        public Task<bool> GetPttState() => throw new NotImplementedException();
+        public Task<bool> GetPttState() => Task.FromResult(rig.GetPtt(RigVfo.Current) != PttMode.Off);
 
         public Task SetMode(Vfo vfo, Mode mode)
         {
             var rm = GetHamlibMode(mode);
-            rig.SetMode(rm, rig.PassbandNormal(rm), GetVfo(vfo));
+            rig.SetMode(rm, rig.PassbandNormal(rm), GetHamlibVfo(vfo));
             return Task.CompletedTask;
         }
 
@@ -133,22 +135,47 @@ namespace NRig.Rigs.Hamlib
             return Task.CompletedTask;
         }
 
+        bool ticking;
         private void Tick(object state)
         {
-            Action<RigStatus> callback = (Action<RigStatus>)state;
+            if (ticking) return;
 
-            long width = default;
-            var rigStatus = new RigStatus
+            try
             {
-                VfoA = new VfoStatus
-                {
-                    Frequency = Frequency.Hz(rig.GetFrequency(RigVfo.Current)),
-                    Mode = GetNRigMode(rig.GetMode(ref width, RigVfo.Current))
-                },
-                Ptt = rig.GetPtt(RigVfo.Current) != PttMode.Off,
-            };
+                ticking = true;
 
-            callback(rigStatus);
+                var (ctcssEnabled, ctcssTone) = GetCtcssState().Result;
+                var (repeaterShiftEnabled, repeaterOffset) = GetRepeaterShiftState().Result;
+
+                var rigStatus = new RigStatus
+                {
+                    VfoA = new VfoStatus
+                    {
+                        Frequency = GetFrequency(Vfo.A).Result,
+                        Mode = GetMode(Vfo.A).Result,
+                    },
+                    Ptt = GetPttState().Result,
+                    CtcssEnabled = ctcssEnabled,
+                    Ctcss = ctcssTone,
+                    RepeaterShiftEnabled = repeaterShiftEnabled,
+                    RepeaterShift = repeaterOffset,
+                };
+
+                ((Action<RigStatus>)state)(rigStatus);
+            }
+            finally
+            {
+                ticking = false;
+            }
+        }
+
+        public Task<Mode> GetMode(Vfo vfo)
+        {
+            int hlv = GetHamlibVfo(vfo);
+            long width = default;
+            RigMode rm = rig.GetMode(ref width, hlv);
+            var nrm = GetNRigMode(rm);
+            return Task.FromResult(nrm);
         }
 
         public Task EndRigStatusUpdates()
@@ -176,12 +203,28 @@ namespace NRig.Rigs.Hamlib
 
         public Task<(bool enabled, Frequency tone)> GetCtcssState()
         {
-            throw new NotImplementedException();
+            uint tenthsHz = rig.GetCtcss(RigVfo.Current);
+
+            if (tenthsHz == 0)
+            {
+                return Task.FromResult((false, Frequency.Hz(0.0)));
+            }
+
+            return Task.FromResult((true, f: Frequency.Hz(tenthsHz / 10.0)));
         }
 
         public Task<(bool enabled, Frequency offset)> GetRepeaterShiftState()
         {
-            throw new NotImplementedException();
+            var direction = rig.GetRepeaterShift(RigVfo.Current);
+
+            if (direction == RepeaterShift.None)
+            {
+                return Task.FromResult((false, new Frequency()));
+            }
+
+            var offset = Frequency.Hz((direction == RepeaterShift.Plus ? 1 : -1) * (double)rig.GetRepeaterOffset(RigVfo.Current));
+
+            return Task.FromResult((true, offset));
         }
 
         public Task SetRepeaterShift(Frequency? frequency)
