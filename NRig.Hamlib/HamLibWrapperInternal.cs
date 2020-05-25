@@ -11,7 +11,7 @@ namespace NRig.Rigs.Hamlib
 
         public HamLibWrapperInternal(string rigName, string port)
         {
-            rig = new CapabilityFakingHamLibRig(new HamlibRigFacade(rigName));
+            rig = new CapabilityFakingHamLibRig(new TimeoutRetryingHamLibRig(new HamlibRigLockingFacade(rigName)));
             rig.Open(port);
         }
 
@@ -172,8 +172,7 @@ namespace NRig.Rigs.Hamlib
         public Task<Mode> GetMode(Vfo vfo)
         {
             int hlv = GetHamlibVfo(vfo);
-            long width = default;
-            RigMode rm = rig.GetMode(ref width, hlv);
+            (RigMode rm, _) = rig.GetMode(hlv);
             var nrm = GetNRigMode(rm);
             return Task.FromResult(nrm);
         }

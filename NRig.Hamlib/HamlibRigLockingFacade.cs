@@ -2,12 +2,12 @@
 
 namespace NRig.Rigs.Hamlib
 {
-    internal class HamlibRigFacade : IHamlibRig
+    internal class HamlibRigLockingFacade : IHamlibRig
     {
         private readonly Rig rig;
         private readonly object lockObj = new object();
 
-        public HamlibRigFacade(string rigName)
+        public HamlibRigLockingFacade(string rigName)
         {
             rig = new Rig(rigName);
         }
@@ -83,11 +83,13 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
-        public RigMode GetMode(ref long width, int vfo)
+        public (RigMode, long width) GetMode(int vfo)
         {
             lock (lockObj)
             {
-                return rig.GetMode(ref width, vfo);
+                long width = default;
+                var mode = rig.GetMode(ref width, vfo);
+                return (mode, width);
             }
         }
 

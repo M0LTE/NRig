@@ -6,7 +6,7 @@ namespace NRig.Rigs.Hamlib
     internal interface IHamlibRig : IDisposable
     {
         double GetFrequency(int vfo);
-        RigMode GetMode(ref long width, int vfo);
+        (RigMode, long width) GetMode(int vfo);
         void Open(string port);
         int PassbandNormal(RigMode mode);
         uint GetCtcss(int vfo);
