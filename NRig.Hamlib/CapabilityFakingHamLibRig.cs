@@ -19,7 +19,7 @@ namespace NRig.Rigs.Hamlib
         public CapabilityFakingHamLibRig(IHamlibRig innerRig) => this.innerRig = innerRig;
 
         public void Dispose() => innerRig.Dispose();
-        public void Open(string port) => innerRig.Open(port);
+        public void Open(string port, BaudRate baudRate, Handshake handshake, int dataBits, int stopBits) => innerRig.Open(port, baudRate, handshake, dataBits, stopBits);
 
         public uint GetCtcss(int vfo) => RunWithFeatureCheck(innerRig.GetCtcss, GetCtcssFromDictionary, vfo);
         public double GetFrequency(int vfo) => RunWithFeatureCheck(innerRig.GetFrequency, null, vfo);

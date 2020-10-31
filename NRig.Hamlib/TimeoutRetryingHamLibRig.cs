@@ -18,7 +18,7 @@ namespace NRig.Rigs.Hamlib
             innerRig.Dispose();
         }
 
-        public void Open(string port) => innerRig.Open(port);
+        public void Open(string port, BaudRate baudRate, Handshake handshake, int dataBits, int stopBits) => innerRig.Open(port, baudRate, handshake, dataBits, stopBits);
         public int PassbandNormal(RigMode mode) => innerRig.PassbandNormal(mode);
 
         public uint GetCtcss(int vfo) => RunWithRetry(innerRig.GetCtcss, vfo);

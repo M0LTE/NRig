@@ -16,7 +16,7 @@ namespace NRig.Hamlib.Harness
             Console.WriteLine($"Managed version: {HamLibWrapper.ManagedVersion}");
             Console.WriteLine($"Native version:  {HamLibWrapper.NativeVersion}");
 
-            var rig = new HamLibWrapper("FT-857", args[0]);
+            var rig = new HamLibWrapper("FT-450", args[0], BaudRate.Baud38400, Handshake.Hardware, 8, 2);
 
             RigStatus oldStatus = null;
             await rig.BeginRigStatusUpdates(status =>

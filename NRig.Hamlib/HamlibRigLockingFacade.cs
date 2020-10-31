@@ -17,9 +17,9 @@ namespace NRig.Rigs.Hamlib
             rig.Dispose();
         }
 
-        public void Open(string port)
+        public void Open(string port, BaudRate baudRate, Handshake handshake, int dataBits, int stopBits)
         {
-            rig.Open(port);
+            rig.Open(port, (RigSerialBaudRate)baudRate, (RigSerialHandshake)handshake, dataBits, stopBits);
         }
 
         public void SetFrequency(double freq, int vfo)

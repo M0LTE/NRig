@@ -9,10 +9,10 @@ namespace NRig.Rigs.Hamlib
     {
         private readonly IHamlibRig rig;
 
-        public HamLibWrapperInternal(string rigName, string port)
+        public HamLibWrapperInternal(string rigName, string port, BaudRate baudRate, Handshake handshake, int dataBits, int stopBits)
         {
             rig = new CapabilityFakingHamLibRig(new TimeoutRetryingHamLibRig(new HamlibRigLockingFacade(rigName)));
-            rig.Open(port);
+            rig.Open(port, baudRate, handshake, dataBits, stopBits);
         }
 
         public Task<Frequency> GetFrequency(Vfo vfo) => Task.FromResult(Frequency.Hz(rig.GetFrequency(RigVfo.Current)));

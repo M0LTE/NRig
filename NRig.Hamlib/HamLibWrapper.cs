@@ -8,9 +8,9 @@ namespace NRig.Rigs.Hamlib
     {
         private readonly HamLibWrapperInternal hamLibWrapper;
 
-        public HamLibWrapper(string rigName, string port)
+        public HamLibWrapper(string rigName, string port, BaudRate baudRate, Handshake handshake, int dataBits, int stopBits)
         {
-            hamLibWrapper = new HamLibWrapperInternal(rigName, port);
+            hamLibWrapper = new HamLibWrapperInternal(rigName, port, baudRate, handshake, dataBits, stopBits);
         }
 
         public static string NativeVersion => HamLib.NativeVersion;
