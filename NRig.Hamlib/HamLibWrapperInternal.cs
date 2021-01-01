@@ -126,12 +126,8 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
-        Timer timer;
-
-        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback)
         {
-            timer = new Timer(Tick, callback, TimeSpan.Zero, updateFrequency);
-
             return Task.CompletedTask;
         }
 
@@ -179,8 +175,6 @@ namespace NRig.Rigs.Hamlib
 
         public Task EndRigStatusUpdates()
         {
-            timer?.Change(Timeout.Infinite, Timeout.Infinite);
-            
             return Task.CompletedTask;
         }
 

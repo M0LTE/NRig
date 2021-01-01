@@ -29,7 +29,7 @@ namespace NRig
         Task<bool> GetPreampState();
         Task SetClarifierOffset(Frequency frequency);
         Task<Frequency> GetClarifierOffset();
-        Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency);
+        Task BeginRigStatusUpdates(Action<RigStatus> callback);
         Task EndRigStatusUpdates();
         Task SetCtcss(Frequency? frequency);
         Task<(bool enabled, Frequency tone)> GetCtcssState();

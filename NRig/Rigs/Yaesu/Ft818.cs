@@ -31,10 +31,9 @@ namespace NRig.Rigs.Yaesu
             Task.Factory.StartNew(PollRig, TaskCreationOptions.LongRunning);
         }
 
-        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback)
         {
             rigStatusCallback = callback;
-            rigPollInterval = updateFrequency;
 
             return Task.CompletedTask;
         }
