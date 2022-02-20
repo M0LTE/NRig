@@ -261,7 +261,7 @@ namespace NRig.Rigs.Yaesu
 
             //const byte dcsOn = 0x0a;
             //const byte encodeAndDecodeCtcssOn = 0x2a; // T+SQL
-            const byte value_ctcssOn = 0x4a; // T
+            //const byte value_ctcssOn = 0x4a; // T
             const byte value_ctcssOff = 0x8a;
             const byte opcode_ctcssState = 0x0a;
 
