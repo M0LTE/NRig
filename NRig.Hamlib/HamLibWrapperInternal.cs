@@ -126,7 +126,7 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
-        public Task BeginRigStatusUpdates(Action<RigStatus> callback)
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency)
         {
             return Task.CompletedTask;
         }

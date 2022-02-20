@@ -65,7 +65,7 @@ namespace NRig.Rigs.Hamlib
             }
         }
 
-        public Task BeginRigStatusUpdates(Action<RigStatus> callback) => ExecuteWithExceptionHandling(a => hamLibWrapper.BeginRigStatusUpdates(a), callback);
+        public Task BeginRigStatusUpdates(Action<RigStatus> callback, TimeSpan updateFrequency) => ExecuteWithExceptionHandling(a => hamLibWrapper.BeginRigStatusUpdates(a, updateFrequency), callback);
         public Task BeginTransmitTuningCarrier(TimeSpan maxDuration) => ExecuteWithExceptionHandling(a => hamLibWrapper.BeginTransmitTuningCarrier(a), maxDuration);
         public Task SetActiveVfo(Vfo bfo) => ExecuteWithExceptionHandling(a => hamLibWrapper.SetActiveVfo(a), bfo);
         public Task SetClarifierOffset(Frequency frequency) => ExecuteWithExceptionHandling(a => hamLibWrapper.SetClarifierOffset(a), frequency);
